@@ -2,9 +2,8 @@ import sys
 import os
 import time
 import json
-import datetime
 
-file_name = os.path.join('.', 'data', str(datetime.date.today()) + '.json')
+file_name = os.path.join('.', 'data', time.strftime('%Y-%m-%d', time.localtime()) + '.json')
 
 exercises = [
     {'id': 1, 'name': 'Pull ups'},

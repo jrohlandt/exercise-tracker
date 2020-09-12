@@ -1,14 +1,16 @@
+import sys
 import os
 import time
 import json
 import datetime
 
-# print(time.strftime('%Y-%m-%d %H:%M:%S %z', time.localtime()))
-# quit()
+file_name = os.path.join('.', 'data', str(datetime.date.today()) + '.json')
+
 exercises = [
     {'id': 1, 'name': 'Pull ups'},
     {'id': 2, 'name': 'Push ups'},
-    {'id': 3, 'name': 'Squats', 'uses_weights': True}
+    {'id': 3, 'name': 'Squats', 'uses_weights': True},
+    {'id': 4, 'name': 'Lateral lifts', 'uses_weights': True}
 ]
 
 
@@ -23,25 +25,61 @@ def clear_screen():
     os.system('clear')
 
 
-def main():
-    os.system("clear")
-
-    todays_sets = []
-    file_name = os.path.join('.', 'data', str(datetime.date.today()) + '.json')
-    # file_name = './data/' + str(datetime.date.today()) + '.json'
+def get_sets():
+    sets = []
     try:
         with open(file_name, 'r') as f:
             read_data = f.read()
             if read_data:
-                todays_sets = json.loads(read_data)
+                sets = json.loads(read_data)
     except FileNotFoundError:
         print('Creating new exercise file for today...')
         f = open(file_name, 'w')
         f.close()
         clear_screen()
 
+    return sets
+
+
+def print_summary():
+    feedback = 'So far today you done: \n'
+
+    sets = get_sets()
+    sets_sums = {}
+    for e_set in sets:
+        e = get_exercise(e_set['exercise_id'])
+
+        if e['id'] not in sets_sums:
+            sets_sums[e['id']] = {'name': e['name'], 'reps': 0}
+
+        sets_sums[e['id']]['reps'] += e_set['reps']
+
+    for e_set in sets_sums.items():
+        values = e_set[1]
+        feedback += f" {values['reps']} {values['name']} \n"
+
+    print(feedback)
+
+
+def main():
+    os.system("clear")
+
+    args = sys.argv
+    if len(args) == 2:
+        if args[1] == 'status':
+            print_summary()
+            quit()
+        elif args[1] == 'add':
+            pass
+        else:
+            print("invalid command")
+            quit()
+    else:
+        print("no command")
+        quit()
+        
+    todays_sets = get_sets()
     prompt = "Choose exercise (by number):\n"
-    
     for e in exercises:
         prompt += f"[{e['id']}] {e['name']}\n"
 
@@ -75,36 +113,13 @@ def main():
         'reps': int(reps),
         'weight': weight
     }
-
     todays_sets.append(new_set)
-
     sets_dump = json.dumps(todays_sets)
 
     with open(file_name, 'w') as f:
         f.write(sets_dump)
 
-    time.sleep(1)
-
-    feedback = 'So far today you done: \n'
-    
-    with open(file_name) as f:
-        sets = f.read()
-        sets = json.loads(sets)
-
-        sets_sums = {}
-        for e_set in sets:
-            e = get_exercise(e_set['exercise_id'])
-
-            if e['id'] not in sets_sums:
-                sets_sums[e['id']] = {'name': e['name'], 'reps': 0}
-
-            sets_sums[e['id']]['reps'] += e_set['reps']
-
-        for e_set in sets_sums.items():
-            values = e_set[1]
-            feedback += f" {values['reps']} {values['name']} \n"
-
-    print(feedback)
+    print_summary()
 
 
 if __name__ == "__main__":

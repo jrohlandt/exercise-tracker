@@ -3,7 +3,13 @@ import os
 import time
 import json
 
-file_name = os.path.join('.', 'data', time.strftime('%Y-%m-%d', time.localtime()) + '.json')
+storage_dir = os.path.join('~', '.local', 'share', 'exercise-tracker', 'data')
+storage_dir = os.path.expanduser(storage_dir)
+file_name = os.path.join(storage_dir, time.strftime('%Y-%m-%d', time.localtime()) + '.json')
+
+if not os.path.exists(storage_dir):
+    print('does not exist')
+    os.makedirs(storage_dir)
 
 exercises = [
     {'id': 1, 'name': 'Pull ups'},

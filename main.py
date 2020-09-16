@@ -15,7 +15,8 @@ exercises = [
     {'id': 1, 'name': 'Pull ups'},
     {'id': 2, 'name': 'Push ups'},
     {'id': 3, 'name': 'Squats', 'uses_weights': True},
-    {'id': 4, 'name': 'Lateral lifts', 'uses_weights': True}
+    {'id': 4, 'name': 'Lateral lifts', 'uses_weights': True},
+    {'id': 5, 'name': 'Crunches'}
 ]
 
 
